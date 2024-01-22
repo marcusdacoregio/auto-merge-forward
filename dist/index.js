@@ -30218,10 +30218,9 @@ async function run() {
             const authors = new Set(authorsFromLog);
             authors.forEach(author => console.log('author from set ' + author));
             if (authors.size == 1 /* && authors.has(expectedAuthor)*/) {
-                core.info('Authors contains only expected author ' + authors);
                 core.info(`Merging ${previousBranch} into ${currentBranch} using ours strategy`);
                 await exec.exec('git', ['switch', currentBranch]);
-                await exec.exec('git', ['merge', previousBranch, '-s ours']);
+                await exec.exec('git', ['merge', previousBranch, '-s', 'ours']);
                 branchesToPush.push(currentBranch);
             }
         }
