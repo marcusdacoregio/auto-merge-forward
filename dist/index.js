@@ -3993,27 +3993,20 @@ async function run() {
     try {
         const expectedAuthor = 'dependabot[bot]';
         const branches = ['1.0.x', '1.1.x', 'main'];
+        for (let branch of branches) {
+            await exec.exec('git', ['fetch', 'origin', branch]);
+            await exec.exec('git', [
+                'worktree',
+                'add',
+                '-b',
+                branch,
+                `../${branch}`,
+                `origin/${branch}`
+            ]);
+        }
         for (let i = 1; i < branches.length; i++) {
             const previousBranch = branches[i - 1];
             const currentBranch = branches[i];
-            await exec.exec('git', ['fetch', 'origin', previousBranch]);
-            await exec.exec('git', ['fetch', 'origin', currentBranch]);
-            await exec.exec('git', [
-                'worktree',
-                'add',
-                '-b',
-                previousBranch,
-                `../${previousBranch}`,
-                `origin/${previousBranch}`
-            ]);
-            await exec.exec('git', [
-                'worktree',
-                'add',
-                '-b',
-                currentBranch,
-                `../${currentBranch}`,
-                `origin/${currentBranch}`
-            ]);
             let gitLogOutput = '';
             let gitLogError = '';
             const options = {
