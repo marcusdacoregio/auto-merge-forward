@@ -59,7 +59,7 @@ export async function run(): Promise<void> {
       )
       const authors = new Set<string>(authorsFromLog)
       core.info(`Found ${authors.size} unique commit actors`)
-      if (authors.size === 1 && authors.has(fromAuthor)) {
+      if (authors.size == 1 && authors.has(fromAuthor)) {
         core.info(
           `Merging ${previousBranch} into ${currentBranch} using ${mergeStrategy} strategy`
         )

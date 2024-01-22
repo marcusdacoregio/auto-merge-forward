@@ -30216,7 +30216,7 @@ async function run() {
             core.info(`Found ${authorsFromLog.length} commits in ${previousBranch} that are not present in ${currentBranch}`);
             const authors = new Set(authorsFromLog);
             core.info(`Found ${authors.size} unique commit actors`);
-            if (authors.size === 1 && authors.has(fromAuthor)) {
+            if (authors.size == 1 && authors.has(fromAuthor)) {
                 core.info(`Merging ${previousBranch} into ${currentBranch} using ${mergeStrategy} strategy`);
                 await exec.exec('git', ['switch', currentBranch]);
                 await exec.exec('git', ['merge', previousBranch, '-s', mergeStrategy]);
