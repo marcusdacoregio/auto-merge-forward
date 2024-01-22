@@ -1,23 +1,24 @@
-name: 'The name of your action here'
-description: 'Provide a description here'
-author: 'Your name or organization here'
-
-# Add your action's branding here. This will appear on the GitHub Marketplace.
-branding:
-  icon: 'heart'
-  color: 'red'
+name: 'Auto Merge Forward'
+description: 'Automatically merge commits from older branches into more recents ones'
+author: 'marcusdacoregio'
 
 # Define your inputs here.
-# inputs:
-#   milliseconds:
-#     description: 'Your input description here'
-#     required: true
-#     default: '1000'
-
-# Define your outputs here.
-outputs:
-  time:
-    description: 'Your output description here'
+inputs:
+  from-author:
+    description: 'Only merge if all commits match the author'
+    required: true
+    default: 'dependabot[bot]'
+  branches:
+    description: 'The branches to merge, from oldest to newest'
+    required: true
+  merge-strategy:
+    description: 'The merge strategy to use'
+    required: true
+    default: ours
+  dry-run:
+    description: 'Whether to push the changes'
+    required: false
+    default: false
 
 runs:
   using: node20

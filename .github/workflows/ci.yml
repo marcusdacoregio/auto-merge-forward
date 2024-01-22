@@ -30,17 +30,17 @@ jobs:
         id: npm-ci
         run: npm ci
 
-      # - name: Check Format
-      #   id: npm-format-check
-      #   run: npm run format:check
+      - name: Check Format
+        id: npm-format-check
+        run: npm run format:check
 
-      # - name: Lint
-      #   id: npm-lint
-      #   run: npm run lint
+      - name: Lint
+        id: npm-lint
+        run: npm run lint
 
-      # - name: Test
-      #   id: npm-ci-test
-      #   run: npm run ci-test
+      - name: Test
+        id: npm-ci-test
+        run: npm run ci-test
 
   test-action:
     name: GitHub Actions Test
@@ -59,3 +59,10 @@ jobs:
       - name: Test Local Action
         id: test-action
         uses: ./
+        with:
+          branches: 
+            - 1.0.x
+            - 1.1.x
+            - main
+          merge-strategy: ours
+          dry-run: true

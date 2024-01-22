@@ -8,8 +8,10 @@ import * as github from '@actions/github'
  */
 export async function run(): Promise<void> {
   try {
-    const fromAuthor = 'marcusdacoregio@gmail.com'
-    const branches = ['1.0.x', '1.1.x', 'main']
+    const fromAuthor = core.getInput('from-author')
+    const branches = core.getInput('branches')
+    const mergeStrategy: string = core.getInput('merge-strategy')
+    const dryRun: boolean = core.getInput('dry-run') == 'true'
     const branchesToPush: Array<string> = []
 
     const originBranch = github.context.ref.split('/')[2]
@@ -57,23 +59,27 @@ export async function run(): Promise<void> {
       core.info('authors from log ' + authorsFromLog)
       const authors = new Set<string>(authorsFromLog)
       authors.forEach(author => console.log('author from set ' + author))
-      if (authors.size == 1 /* && authors.has(expectedAuthor)*/) {
+      if (authors.size == 1 && authors.has(fromAuthor)) {
         core.info(
-          `Merging ${previousBranch} into ${currentBranch} using ours strategy`
+          `Merging ${previousBranch} into ${currentBranch} using ${mergeStrategy} strategy`
         )
         await exec.exec('git', ['switch', currentBranch])
-        await exec.exec('git', ['merge', previousBranch, '-s', 'ours'])
+        await exec.exec('git', ['merge', previousBranch, '-s', mergeStrategy])
         branchesToPush.push(currentBranch)
       }
     }
 
-    const pushCommand: Array<string> = [
-      'push',
-      '--atomic',
-      'origin',
-      ...branchesToPush
-    ]
-    exec.exec('git', pushCommand)
+    if (dryRun) {
+      core.info('Dry-run is true, not invoking push this time')
+    } else {
+      const pushCommand: Array<string> = [
+        'push',
+        '--atomic',
+        'origin',
+        ...branchesToPush
+      ]
+      exec.exec('git', pushCommand)
+    }
   } catch (error) {
     // Fail the workflow run if an error occurs
     if (error instanceof Error) core.setFailed(error.message)

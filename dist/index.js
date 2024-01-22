@@ -30176,8 +30176,10 @@ const github = __importStar(__nccwpck_require__(5438));
  */
 async function run() {
     try {
-        const fromAuthor = 'marcusdacoregio@gmail.com';
-        const branches = ['1.0.x', '1.1.x', 'main'];
+        const fromAuthor = core.getInput('from-author');
+        const branches = core.getInput('branches');
+        const mergeStrategy = core.getInput('merge-strategy');
+        const dryRun = core.getInput('dry-run') == 'true';
         const branchesToPush = [];
         const originBranch = github.context.ref.split('/')[2];
         for (let branch of branches) {
@@ -30217,20 +30219,25 @@ async function run() {
             core.info('authors from log ' + authorsFromLog);
             const authors = new Set(authorsFromLog);
             authors.forEach(author => console.log('author from set ' + author));
-            if (authors.size == 1 /* && authors.has(expectedAuthor)*/) {
-                core.info(`Merging ${previousBranch} into ${currentBranch} using ours strategy`);
+            if (authors.size == 1 && authors.has(fromAuthor)) {
+                core.info(`Merging ${previousBranch} into ${currentBranch} using ${mergeStrategy} strategy`);
                 await exec.exec('git', ['switch', currentBranch]);
-                await exec.exec('git', ['merge', previousBranch, '-s', 'ours']);
+                await exec.exec('git', ['merge', previousBranch, '-s', mergeStrategy]);
                 branchesToPush.push(currentBranch);
             }
         }
-        const pushCommand = [
-            'push',
-            '--atomic',
-            'origin',
-            ...branchesToPush
-        ];
-        exec.exec('git', pushCommand);
+        if (dryRun) {
+            core.info('Dry-run is true, not invoking push this time');
+        }
+        else {
+            const pushCommand = [
+                'push',
+                '--atomic',
+                'origin',
+                ...branchesToPush
+            ];
+            exec.exec('git', pushCommand);
+        }
     }
     catch (error) {
         // Fail the workflow run if an error occurs
