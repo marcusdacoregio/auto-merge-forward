@@ -11,8 +11,10 @@ export async function run(): Promise<void> {
     const expectedAuthor = 'dependabot[bot]'
     const branches = ['1.0.x', '1.1.x', 'main']
 
+    const originBranch = github.context.ref.split('/')[2]
     for (let branch of branches) {
-      if (branch == 'main') {
+      if (branch == originBranch) {
+        await exec.exec('git', ['fetch', 'origin', branch])
         core.info(`Logs from ${branch}`)
         await exec.exec('git', ['log', branch])
         continue
