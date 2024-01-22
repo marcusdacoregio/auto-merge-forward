@@ -8,22 +8,18 @@ import * as github from '@actions/github'
  */
 export async function run(): Promise<void> {
   try {
-    const expectedAuthor = 'dependabot[bot]'
+    const fromAuthor = 'marcusdacoregio@gmail.com'
     const branches = ['1.0.x', '1.1.x', 'main']
 
     const originBranch = github.context.ref.split('/')[2]
     for (let branch of branches) {
       if (branch == originBranch) {
         await exec.exec('git', ['fetch', 'origin', branch, '--unshallow'])
-        core.info(`Logs from ${branch}`)
-        await exec.exec('git', ['log', branch])
         continue
       }
       await exec.exec('git', ['fetch', 'origin', branch])
       await exec.exec('git', ['switch', branch])
       await exec.exec('git', ['switch', '-'])
-      core.info(`Logs from ${branch}`)
-      await exec.exec('git', ['log', branch])
     }
 
     for (let i = 1; i < branches.length; i++) {
@@ -56,7 +52,9 @@ export async function run(): Promise<void> {
       )
       core.info('gitLogOutput = ' + gitLogOutput)
       core.info('gitLogError = ' + gitLogError)
-      const authors = new Set<string>(gitLogOutput.split('\n').filter(v => !!v))
+      const authorsFromLog = gitLogOutput.split('\n').filter(v => !!v)
+      core.info('authors from log ' + authorsFromLog)
+      const authors = new Set<string>()
       authors.forEach(author => console.log('author from set ' + author))
       if (authors.size == 1 /* && authors.has(expectedAuthor)*/) {
         core.info('Authors contains only expected author ' + authors)
