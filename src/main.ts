@@ -16,15 +16,8 @@ export async function run(): Promise<void> {
         continue
       }
       await exec.exec('git', ['fetch', 'origin', branch])
-      await exec.exec('git', [
-        'worktree',
-        'add',
-        '--track',
-        '-b',
-        branch,
-        `../${branch}`,
-        `origin/${branch}`
-      ])
+      await exec.exec('git', ['checkout', `origin/${branch}`])
+      await exec.exec('git', ['switch', '-'])
     }
 
     for (let i = 1; i < branches.length; i++) {
@@ -58,7 +51,7 @@ export async function run(): Promise<void> {
       core.info('gitLogOutput = ' + gitLogOutput)
       core.info('gitLogError = ' + gitLogError)
       const authors = new Set<string>(gitLogOutput.split('\n'))
-      core.info('set of authors = ' + authors)
+      authors.forEach(author => console.log('author from set' + author))
       if (authors.size == 1 && authors.has(expectedAuthor)) {
         core.info('Authors contains only expected author ' + authors)
       }

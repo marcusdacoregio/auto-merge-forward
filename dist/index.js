@@ -25978,15 +25978,8 @@ async function run() {
                 continue;
             }
             await exec.exec('git', ['fetch', 'origin', branch]);
-            await exec.exec('git', [
-                'worktree',
-                'add',
-                '--track',
-                '-b',
-                branch,
-                `../${branch}`,
-                `origin/${branch}`
-            ]);
+            await exec.exec('git', ['checkout', `origin/${branch}`]);
+            await exec.exec('git', ['switch', '-']);
         }
         for (let i = 1; i < branches.length; i++) {
             const previousBranch = branches[i - 1];
@@ -26013,7 +26006,7 @@ async function run() {
             core.info('gitLogOutput = ' + gitLogOutput);
             core.info('gitLogError = ' + gitLogError);
             const authors = new Set(gitLogOutput.split('\n'));
-            core.info('set of authors = ' + authors);
+            authors.forEach(author => console.log('author from set' + author));
             if (authors.size == 1 && authors.has(expectedAuthor)) {
                 core.info('Authors contains only expected author ' + authors);
             }
