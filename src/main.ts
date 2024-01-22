@@ -9,16 +9,16 @@ import * as github from '@actions/github'
 export async function run(): Promise<void> {
   try {
     const fromAuthor = core.getInput('from-author')
-    const branches: Array<string> = core
+    const branches: string[] = core
       .getInput('branches')
       .split(',')
       .map(b => b.trim())
     const mergeStrategy: string = core.getInput('merge-strategy')
-    const dryRun: boolean = core.getInput('dry-run') == 'true'
+    const dryRun: boolean = core.getInput('dry-run') === 'true'
 
     const originBranch = github.context.ref.split('/')[2]
-    for (let branch of branches) {
-      if (branch == originBranch) {
+    for (const branch of branches) {
+      if (branch === originBranch) {
         await exec.exec('git', ['fetch', 'origin', branch, '--unshallow'])
         continue
       }
@@ -27,21 +27,17 @@ export async function run(): Promise<void> {
       await exec.exec('git', ['switch', '-'])
     }
 
-    const branchesToPush: Array<string> = []
+    const branchesToPush: string[] = []
 
     for (let i = 1; i < branches.length; i++) {
       const previousBranch = branches[i - 1]
       const currentBranch = branches[i]
 
       let gitLogOutput = ''
-      let gitLogError = ''
       const options: exec.ExecOptions = {
         listeners: {
           stdout: (data: Buffer) => {
             gitLogOutput = data.toString()
-          },
-          stderr: (data: Buffer) => {
-            gitLogError = data.toString()
           }
         }
       }
@@ -57,13 +53,13 @@ export async function run(): Promise<void> {
         ],
         options
       )
-      core.info('gitLogOutput = ' + gitLogOutput)
-      core.info('gitLogError = ' + gitLogError)
       const authorsFromLog = gitLogOutput.split('\n').filter(v => !!v)
-      core.info('authors from log ' + authorsFromLog)
+      core.info(
+        `Found ${authorsFromLog.length} commits in ${previousBranch} that are not present in ${currentBranch}`
+      )
       const authors = new Set<string>(authorsFromLog)
-      authors.forEach(author => console.log('author from set ' + author))
-      if (authors.size == 1 && authors.has(fromAuthor)) {
+      core.info(`Found ${authors.size} unique commit actors`)
+      if (authors.size === 1 && authors.has(fromAuthor)) {
         core.info(
           `Merging ${previousBranch} into ${currentBranch} using ${mergeStrategy} strategy`
         )
@@ -73,10 +69,13 @@ export async function run(): Promise<void> {
       }
     }
 
+    if (branchesToPush.length === 0) {
+      return
+    }
     if (dryRun) {
       core.info('Dry-run is true, not invoking push this time')
     } else {
-      const pushCommand: Array<string> = [
+      const pushCommand: string[] = [
         'push',
         '--atomic',
         'origin',

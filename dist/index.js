@@ -30182,10 +30182,10 @@ async function run() {
             .split(',')
             .map(b => b.trim());
         const mergeStrategy = core.getInput('merge-strategy');
-        const dryRun = core.getInput('dry-run') == 'true';
+        const dryRun = core.getInput('dry-run') === 'true';
         const originBranch = github.context.ref.split('/')[2];
-        for (let branch of branches) {
-            if (branch == originBranch) {
+        for (const branch of branches) {
+            if (branch === originBranch) {
                 await exec.exec('git', ['fetch', 'origin', branch, '--unshallow']);
                 continue;
             }
@@ -30198,14 +30198,10 @@ async function run() {
             const previousBranch = branches[i - 1];
             const currentBranch = branches[i];
             let gitLogOutput = '';
-            let gitLogError = '';
             const options = {
                 listeners: {
                     stdout: (data) => {
                         gitLogOutput = data.toString();
-                    },
-                    stderr: (data) => {
-                        gitLogError = data.toString();
                     }
                 }
             };
@@ -30216,18 +30212,19 @@ async function run() {
                 '--format=%ae',
                 '--no-merges'
             ], options);
-            core.info('gitLogOutput = ' + gitLogOutput);
-            core.info('gitLogError = ' + gitLogError);
             const authorsFromLog = gitLogOutput.split('\n').filter(v => !!v);
-            core.info('authors from log ' + authorsFromLog);
+            core.info(`Found ${authorsFromLog.length} commits in ${previousBranch} that are not present in ${currentBranch}`);
             const authors = new Set(authorsFromLog);
-            authors.forEach(author => console.log('author from set ' + author));
-            if (authors.size == 1 && authors.has(fromAuthor)) {
+            core.info(`Found ${authors.size} unique commit actors`);
+            if (authors.size === 1 && authors.has(fromAuthor)) {
                 core.info(`Merging ${previousBranch} into ${currentBranch} using ${mergeStrategy} strategy`);
                 await exec.exec('git', ['switch', currentBranch]);
                 await exec.exec('git', ['merge', previousBranch, '-s', mergeStrategy]);
                 branchesToPush.push(currentBranch);
             }
+        }
+        if (branchesToPush.length === 0) {
+            return;
         }
         if (dryRun) {
             core.info('Dry-run is true, not invoking push this time');
