@@ -30177,10 +30177,12 @@ const github = __importStar(__nccwpck_require__(5438));
 async function run() {
     try {
         const fromAuthor = core.getInput('from-author');
-        const branches = core.getInput('branches');
+        const branches = core
+            .getInput('branches')
+            .split(',')
+            .map(b => b.trim());
         const mergeStrategy = core.getInput('merge-strategy');
         const dryRun = core.getInput('dry-run') == 'true';
-        const branchesToPush = [];
         const originBranch = github.context.ref.split('/')[2];
         for (let branch of branches) {
             if (branch == originBranch) {
@@ -30191,6 +30193,7 @@ async function run() {
             await exec.exec('git', ['switch', branch]);
             await exec.exec('git', ['switch', '-']);
         }
+        const branchesToPush = [];
         for (let i = 1; i < branches.length; i++) {
             const previousBranch = branches[i - 1];
             const currentBranch = branches[i];

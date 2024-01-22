@@ -9,10 +9,12 @@ import * as github from '@actions/github'
 export async function run(): Promise<void> {
   try {
     const fromAuthor = core.getInput('from-author')
-    const branches = core.getInput('branches')
+    const branches: Array<string> = core
+      .getInput('branches')
+      .split(',')
+      .map(b => b.trim())
     const mergeStrategy: string = core.getInput('merge-strategy')
     const dryRun: boolean = core.getInput('dry-run') == 'true'
-    const branchesToPush: Array<string> = []
 
     const originBranch = github.context.ref.split('/')[2]
     for (let branch of branches) {
@@ -24,6 +26,8 @@ export async function run(): Promise<void> {
       await exec.exec('git', ['switch', branch])
       await exec.exec('git', ['switch', '-'])
     }
+
+    const branchesToPush: Array<string> = []
 
     for (let i = 1; i < branches.length; i++) {
       const previousBranch = branches[i - 1]

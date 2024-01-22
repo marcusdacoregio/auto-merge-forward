@@ -9,12 +9,12 @@ inputs:
     required: true
     default: 'dependabot[bot]'
   branches:
-    description: 'The branches to merge, from oldest to newest'
+    description: 'The branches to merge, from oldest to newest, separated by comma'
     required: true
   merge-strategy:
     description: 'The merge strategy to use'
     required: true
-    default: ours
+    default: 'ours'
   dry-run:
     description: 'Whether to push the changes'
     required: false
