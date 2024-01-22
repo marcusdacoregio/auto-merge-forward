@@ -12,7 +12,7 @@ export async function run(): Promise<void> {
     const branches = ['1.0.x', '1.1.x', 'main']
 
     for (let branch of branches) {
-      if (branch == github.context.ref) {
+      if (branch == 'main') {
         continue
       }
       await exec.exec('git', ['fetch', 'origin', branch])
