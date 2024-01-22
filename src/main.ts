@@ -29,13 +29,16 @@ export async function run(): Promise<void> {
       const options: exec.ExecOptions = {
         listeners: {
           stdout: (data: Buffer) => {
-            gitLogOutput += data.toString()
+            gitLogOutput = data.toString()
           },
           stderr: (data: Buffer) => {
-            gitLogError += data.toString()
+            gitLogError = data.toString()
           }
         }
       }
+
+      core.info(`Logs from ${previousBranch}`)
+      await exec.exec('git', ['log', previousBranch])
 
       await exec.exec(
         'git',

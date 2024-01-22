@@ -25989,13 +25989,15 @@ async function run() {
             const options = {
                 listeners: {
                     stdout: (data) => {
-                        gitLogOutput += data.toString();
+                        gitLogOutput = data.toString();
                     },
                     stderr: (data) => {
-                        gitLogError += data.toString();
+                        gitLogError = data.toString();
                     }
                 }
             };
+            core.info(`Logs from ${previousBranch}`);
+            await exec.exec('git', ['log', previousBranch]);
             await exec.exec('git', [
                 'log',
                 previousBranch,
