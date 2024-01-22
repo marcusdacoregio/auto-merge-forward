@@ -18,6 +18,8 @@ export async function run(): Promise<void> {
       await exec.exec('git', ['fetch', 'origin', branch])
       await exec.exec('git', ['switch', branch])
       await exec.exec('git', ['switch', '-'])
+      core.info(`Logs from ${branch}`)
+      await exec.exec('git', ['log', branch])
     }
 
     for (let i = 1; i < branches.length; i++) {
@@ -36,9 +38,6 @@ export async function run(): Promise<void> {
           }
         }
       }
-
-      core.info(`Logs from ${previousBranch}`)
-      await exec.exec('git', ['log', previousBranch])
 
       await exec.exec(
         'git',
