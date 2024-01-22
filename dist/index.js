@@ -25977,7 +25977,7 @@ async function run() {
             if (branch == 'main') {
                 continue;
             }
-            await exec.exec('git', ['fetch', '--unshallow', 'origin', branch]);
+            await exec.exec('git', ['fetch', 'origin', branch]);
             await exec.exec('git', ['switch', branch]);
             await exec.exec('git', ['switch', '-']);
         }
