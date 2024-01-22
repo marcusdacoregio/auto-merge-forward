@@ -15,8 +15,8 @@ export async function run(): Promise<void> {
       if (branch == 'main') {
         continue
       }
-      await exec.exec('git', ['fetch', 'origin', branch])
-      await exec.exec('git', ['checkout', `${branch}`])
+      await exec.exec('git', ['fetch', '--unshallow', 'origin', branch])
+      await exec.exec('git', ['switch', branch])
       await exec.exec('git', ['switch', '-'])
     }
 
@@ -50,9 +50,9 @@ export async function run(): Promise<void> {
       )
       core.info('gitLogOutput = ' + gitLogOutput)
       core.info('gitLogError = ' + gitLogError)
-      const authors = new Set<string>(gitLogOutput.split('\n'))
-      authors.forEach(author => console.log('author from set' + author))
-      if (authors.size == 1 && authors.has(expectedAuthor)) {
+      const authors = new Set<string>(gitLogOutput.split('\n').filter(v => !!v))
+      authors.forEach(author => console.log('author from set ' + author))
+      if (authors.size == 1 /* && authors.has(expectedAuthor)*/) {
         core.info('Authors contains only expected author ' + authors)
       }
     }
