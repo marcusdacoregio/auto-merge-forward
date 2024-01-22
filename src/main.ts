@@ -10,6 +10,7 @@ export async function run(): Promise<void> {
   try {
     const fromAuthor = 'marcusdacoregio@gmail.com'
     const branches = ['1.0.x', '1.1.x', 'main']
+    const branchesToPush: Array<string> = []
 
     const originBranch = github.context.ref.split('/')[2]
     for (let branch of branches) {
@@ -58,8 +59,21 @@ export async function run(): Promise<void> {
       authors.forEach(author => console.log('author from set ' + author))
       if (authors.size == 1 /* && authors.has(expectedAuthor)*/) {
         core.info('Authors contains only expected author ' + authors)
+        core.info(
+          `Merging ${previousBranch} into ${currentBranch} using ours strategy`
+        )
+        exec.exec('git', ['merge', previousBranch, '-s ours'])
+        branchesToPush.push(currentBranch)
       }
     }
+
+    const pushCommand: Array<string> = [
+      'push',
+      '--atomic',
+      'origin',
+      ...branchesToPush
+    ]
+    exec.exec('git', pushCommand)
   } catch (error) {
     // Fail the workflow run if an error occurs
     if (error instanceof Error) core.setFailed(error.message)

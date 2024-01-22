@@ -30178,6 +30178,7 @@ async function run() {
     try {
         const fromAuthor = 'marcusdacoregio@gmail.com';
         const branches = ['1.0.x', '1.1.x', 'main'];
+        const branchesToPush = [];
         const originBranch = github.context.ref.split('/')[2];
         for (let branch of branches) {
             if (branch == originBranch) {
@@ -30218,8 +30219,18 @@ async function run() {
             authors.forEach(author => console.log('author from set ' + author));
             if (authors.size == 1 /* && authors.has(expectedAuthor)*/) {
                 core.info('Authors contains only expected author ' + authors);
+                core.info(`Merging ${previousBranch} into ${currentBranch} using ours strategy`);
+                exec.exec('git', ['merge', previousBranch, '-s ours']);
+                branchesToPush.push(currentBranch);
             }
         }
+        const pushCommand = [
+            'push',
+            '--atomic',
+            'origin',
+            ...branchesToPush
+        ];
+        exec.exec('git', pushCommand);
     }
     catch (error) {
         // Fail the workflow run if an error occurs
