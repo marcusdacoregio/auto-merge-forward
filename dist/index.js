@@ -3996,6 +3996,8 @@ async function run() {
         for (let i = 1; i < branches.length; i++) {
             const previousBranch = branches[i - 1];
             const currentBranch = branches[i];
+            await exec.exec('git', ['fetch', 'origin', previousBranch]);
+            await exec.exec('git', ['fetch', 'origin', currentBranch]);
             let gitLogOutput = '';
             let gitLogError = '';
             const options = {

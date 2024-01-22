@@ -14,6 +14,9 @@ export async function run(): Promise<void> {
       const previousBranch = branches[i - 1]
       const currentBranch = branches[i]
 
+      await exec.exec('git', ['fetch', 'origin', previousBranch])
+      await exec.exec('git', ['fetch', 'origin', currentBranch])
+
       let gitLogOutput = ''
       let gitLogError = ''
       const options: exec.ExecOptions = {
