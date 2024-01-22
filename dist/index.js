@@ -26007,11 +26007,12 @@ async function run() {
                 '--no-merges',
                 previousBranch,
                 `^${currentBranch}`,
-                `--format='%ae'`
+                '--format=%ae'
             ], options);
             core.info('gitLogOutput = ' + gitLogOutput);
             core.info('gitLogError = ' + gitLogError);
             const authors = new Set(gitLogOutput.split('\n'));
+            core.info('set of authors = ' + authors);
             if (authors.size == 1 && authors.has(expectedAuthor)) {
                 core.info('Authors contains only expected author ' + authors);
             }
