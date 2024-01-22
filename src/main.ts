@@ -47,10 +47,10 @@ export async function run(): Promise<void> {
         'git',
         [
           'log',
-          '--no-merges',
           previousBranch,
           `--not ${currentBranch}`,
-          '--format=%ae'
+          '--format=%ae',
+          '--no-merges'
         ],
         options
       )

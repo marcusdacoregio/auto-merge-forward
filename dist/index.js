@@ -26004,10 +26004,10 @@ async function run() {
             };
             await exec.exec('git', [
                 'log',
-                '--no-merges',
                 previousBranch,
                 `--not ${currentBranch}`,
-                '--format=%ae'
+                '--format=%ae',
+                '--no-merges'
             ], options);
             core.info('gitLogOutput = ' + gitLogOutput);
             core.info('gitLogError = ' + gitLogError);
