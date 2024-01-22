@@ -55,14 +55,15 @@ export async function run(): Promise<void> {
       core.info('gitLogError = ' + gitLogError)
       const authorsFromLog = gitLogOutput.split('\n').filter(v => !!v)
       core.info('authors from log ' + authorsFromLog)
-      const authors = new Set<string>()
+      const authors = new Set<string>(authorsFromLog)
       authors.forEach(author => console.log('author from set ' + author))
       if (authors.size == 1 /* && authors.has(expectedAuthor)*/) {
         core.info('Authors contains only expected author ' + authors)
         core.info(
           `Merging ${previousBranch} into ${currentBranch} using ours strategy`
         )
-        exec.exec('git', ['merge', previousBranch, '-s ours'])
+        await exec.exec('git', ['switch', currentBranch])
+        await exec.exec('git', ['merge', previousBranch, '-s ours'])
         branchesToPush.push(currentBranch)
       }
     }
