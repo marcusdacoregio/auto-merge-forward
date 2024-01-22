@@ -1,5 +1,5 @@
 import * as core from '@actions/core'
-import { wait } from './wait'
+import * as exec from '@actions/exec';
 
 /**
  * The main function for the action.
@@ -7,18 +7,36 @@ import { wait } from './wait'
  */
 export async function run(): Promise<void> {
   try {
-    const ms: string = core.getInput('milliseconds')
+    const expectedAuthor = 'dependabot[bot]';
+    const branches = ['1.0.x', '1.1.x', 'main'];
 
-    // Debug logs are only output if the `ACTIONS_STEP_DEBUG` secret is true
-    core.debug(`Waiting ${ms} milliseconds ...`)
 
-    // Log the current timestamp, wait, then log the new timestamp
-    core.debug(new Date().toTimeString())
-    await wait(parseInt(ms, 10))
-    core.debug(new Date().toTimeString())
+    for (let i = 1; i < branches.length; i++) {
+      const previousBranch = branches[i - 1];
+      const currentBranch = branches[i];
 
-    // Set outputs for other workflow steps to use
-    core.setOutput('time', new Date().toTimeString())
+      let gitLogOutput = '';
+      let gitLogError = '';
+      const options: exec.ExecOptions = {
+        listeners: {
+          stdout: (data: Buffer) => {
+            gitLogOutput += data.toString();
+          },
+          stderr: (data: Buffer) => {
+            gitLogError += data.toString();
+          }
+        }
+      };
+
+      await exec.exec('git', ['log', '--no-merges', previousBranch, `^${currentBranch}`, `--format='%ae'`], options)
+      core.info('gitLogOutput = ' + gitLogOutput);
+      core.info('gitLogError = ' + gitLogError);
+      const authors = new Set<string>(gitLogOutput.split('\n'));
+      if (authors.size == 1 && authors.has(expectedAuthor)) {
+        core.info('Authors contains only expected author ' + authors);
+      }
+    }
+
   } catch (error) {
     // Fail the workflow run if an error occurs
     if (error instanceof Error) core.setFailed(error.message)
