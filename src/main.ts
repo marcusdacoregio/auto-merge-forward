@@ -1,5 +1,6 @@
 import * as core from '@actions/core'
 import * as exec from '@actions/exec'
+import * as github from '@actions/github'
 
 /**
  * The main function for the action.
@@ -11,6 +12,9 @@ export async function run(): Promise<void> {
     const branches = ['1.0.x', '1.1.x', 'main']
 
     for (let branch of branches) {
+      if (branch == github.context.ref) {
+        continue
+      }
       await exec.exec('git', ['fetch', 'origin', branch])
       await exec.exec('git', [
         'worktree',
