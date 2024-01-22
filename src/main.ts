@@ -49,7 +49,7 @@ export async function run(): Promise<void> {
           'log',
           '--no-merges',
           previousBranch,
-          `^${currentBranch}`,
+          `--not ${currentBranch}`,
           '--format=%ae'
         ],
         options

@@ -26006,7 +26006,7 @@ async function run() {
                 'log',
                 '--no-merges',
                 previousBranch,
-                `^${currentBranch}`,
+                `--not ${currentBranch}`,
                 '--format=%ae'
             ], options);
             core.info('gitLogOutput = ' + gitLogOutput);
