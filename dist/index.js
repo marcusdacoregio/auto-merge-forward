@@ -25981,6 +25981,7 @@ async function run() {
             await exec.exec('git', [
                 'worktree',
                 'add',
+                '--track',
                 '-b',
                 branch,
                 `../${branch}`,
@@ -26005,7 +26006,7 @@ async function run() {
             await exec.exec('git', [
                 'log',
                 previousBranch,
-                `--not ${currentBranch}`,
+                `^${currentBranch}`,
                 '--format=%ae',
                 '--no-merges'
             ], options);

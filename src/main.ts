@@ -19,6 +19,7 @@ export async function run(): Promise<void> {
       await exec.exec('git', [
         'worktree',
         'add',
+        '--track',
         '-b',
         branch,
         `../${branch}`,
@@ -48,7 +49,7 @@ export async function run(): Promise<void> {
         [
           'log',
           previousBranch,
-          `--not ${currentBranch}`,
+          `^${currentBranch}`,
           '--format=%ae',
           '--no-merges'
         ],
