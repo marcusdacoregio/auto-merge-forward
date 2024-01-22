@@ -25978,7 +25978,7 @@ async function run() {
                 continue;
             }
             await exec.exec('git', ['fetch', 'origin', branch]);
-            await exec.exec('git', ['checkout', `origin/${branch}`]);
+            await exec.exec('git', ['checkout', `${branch}`]);
             await exec.exec('git', ['switch', '-']);
         }
         for (let i = 1; i < branches.length; i++) {

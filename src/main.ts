@@ -16,7 +16,7 @@ export async function run(): Promise<void> {
         continue
       }
       await exec.exec('git', ['fetch', 'origin', branch])
-      await exec.exec('git', ['checkout', `origin/${branch}`])
+      await exec.exec('git', ['checkout', `${branch}`])
       await exec.exec('git', ['switch', '-'])
     }
 
