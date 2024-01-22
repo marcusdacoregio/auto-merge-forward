@@ -62,3 +62,4 @@ jobs:
         with:
           branches: '1.0.x, 1.1.x, main'
           dry-run: true
+          from-author: marcusdacoregio@gmail.com

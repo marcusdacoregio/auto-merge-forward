@@ -66,6 +66,10 @@ export async function run(): Promise<void> {
         await exec.exec('git', ['switch', currentBranch])
         await exec.exec('git', ['merge', previousBranch, '-s', mergeStrategy])
         branchesToPush.push(currentBranch)
+      } else {
+        core.info(
+          `Expected author '${fromAuthor}' not found or there are multiple authors`
+        )
       }
     }
 
