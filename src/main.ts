@@ -14,7 +14,7 @@ export async function run(): Promise<void> {
     const originBranch = github.context.ref.split('/')[2]
     for (let branch of branches) {
       if (branch == originBranch) {
-        await exec.exec('git', ['fetch', 'origin', branch])
+        await exec.exec('git', ['fetch', 'origin', branch, '--unshallow'])
         core.info(`Logs from ${branch}`)
         await exec.exec('git', ['log', branch])
         continue
