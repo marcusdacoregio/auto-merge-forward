@@ -61,5 +61,5 @@ jobs:
         uses: ./
         with:
           branches: '1.0.x, 1.1.x, main'
-          dry-run: true
+          dry-run: false
           from-author: marcusdacoregio@gmail.com
