@@ -12,14 +12,14 @@ export async function run(): Promise<void> {
     const branches = ['1.0.x', '1.1.x', 'main']
 
     for (let branch of branches) {
+      core.info(`Logs from ${branch}`)
+      await exec.exec('git', ['log', branch])
       if (branch == 'main') {
         continue
       }
       await exec.exec('git', ['fetch', 'origin', branch])
       await exec.exec('git', ['switch', branch])
       await exec.exec('git', ['switch', '-'])
-      core.info(`Logs from ${branch}`)
-      await exec.exec('git', ['log', branch])
     }
 
     for (let i = 1; i < branches.length; i++) {
