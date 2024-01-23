@@ -1,16 +1,16 @@
 {
-  "name": "typescript-action",
-  "description": "GitHub Actions TypeScript template",
-  "version": "0.0.0",
+  "name": "auto-merge-forward-action",
+  "description": "Action to Automatically Merge Forward Commits",
+  "version": "0.0.1",
   "author": "",
   "private": true,
-  "homepage": "https://github.com/actions/typescript-action",
+  "homepage": "https://github.com/marcusdacoregio/auto-merge-forward",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/actions/typescript-action.git"
+    "url": "git+https://github.com/marcusdacoregio/auto-merge-forward.git"
   },
   "bugs": {
-    "url": "https://github.com/actions/typescript-action/issues"
+    "url": "https://github.com/marcusdacoregio/auto-merge-forward/issues"
   },
   "keywords": [
     "actions",
