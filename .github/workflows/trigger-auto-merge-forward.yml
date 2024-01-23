@@ -1,0 +1,19 @@
+name: Trigger Auto Merge Forward
+
+on:
+  push:
+
+permissions:
+  contents: read
+
+jobs:
+  trigger-worflow:
+    name: Trigger Auto Merge Forward Workflow
+    runs-on: ubuntu-latest
+    if: github.actor == 'app/dependabot'
+    steps:
+      - name: Checkout
+        id: checkout
+        uses: actions/checkout@v4
+      - id: trigger
+        run: gh workflow run auto-merge-forward

@@ -41,25 +41,3 @@ jobs:
       # - name: Test
       #   id: npm-ci-test
       #   run: npm run ci-test
-
-  test-action:
-    name: GitHub Actions Test
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-    steps:
-      - name: Checkout
-        id: checkout
-        uses: actions/checkout@v4
-      - name: Setup GitHub User
-        id: setup-gh-user
-        run: |
-          git config user.name 'github-actions[bot]'
-          git config user.email 'github-actions[bot]@users.noreply.github.com'
-      - name: Test Local Action
-        id: test-action
-        uses: ./
-        with:
-          branches: '1.0.x, 1.1.x, main'
-          dry-run: false
-          from-author: marcusdacoregio@gmail.com
