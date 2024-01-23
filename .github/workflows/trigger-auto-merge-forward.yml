@@ -17,7 +17,7 @@ jobs:
   trigger-worflow:
     name: Trigger Auto Merge Forward Workflow
     runs-on: ubuntu-latest
-    if: github.event.author.username == 'dependabot[bot]'
+    if: github.event.commits[0].author.username == 'dependabot[bot]'
     steps:
       - name: Checkout
         id: checkout
