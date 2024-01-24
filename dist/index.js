@@ -30224,6 +30224,9 @@ async function run() {
             }
             else {
                 core.info(`Expected author '${fromAuthor}' not found or there are multiple authors`);
+                if (branchesToPush.length > 0) {
+                    throw new Error('Aborted because cannot guarantee the successful merge between all branches');
+                }
             }
         }
         if (branchesToPush.length === 0) {
