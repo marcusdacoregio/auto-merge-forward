@@ -30183,6 +30183,8 @@ async function run() {
             .map(b => b.trim());
         const mergeStrategy = core.getInput('merge-strategy');
         const dryRun = core.getInput('dry-run') === 'true';
+        const useAuthorEmail = core.getInput('use-author-email') === 'true';
+        const logFormat = useAuthorEmail ? '%ae' : '%an';
         const originBranch = github.context.ref.split('/')[2];
         for (const branch of branches) {
             if (branch === originBranch) {
@@ -30209,7 +30211,7 @@ async function run() {
                 'log',
                 previousBranch,
                 `^${currentBranch}`,
-                '--format=%ae',
+                `--format=${logFormat}`,
                 '--no-merges'
             ], options);
             const authorsFromLog = gitLogOutput.split('\n').filter(v => !!v);

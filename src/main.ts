@@ -15,6 +15,8 @@ export async function run(): Promise<void> {
       .map(b => b.trim())
     const mergeStrategy: string = core.getInput('merge-strategy')
     const dryRun: boolean = core.getInput('dry-run') === 'true'
+    const useAuthorEmail: boolean = core.getInput('use-author-email') === 'true'
+    const logFormat = useAuthorEmail ? '%ae' : '%an'
 
     const originBranch = github.context.ref.split('/')[2]
     for (const branch of branches) {
@@ -48,7 +50,7 @@ export async function run(): Promise<void> {
           'log',
           previousBranch,
           `^${currentBranch}`,
-          '--format=%ae',
+          `--format=${logFormat}`,
           '--no-merges'
         ],
         options
