@@ -30185,6 +30185,9 @@ async function run() {
         const dryRun = core.getInput('dry-run') === 'true';
         const useAuthorEmail = core.getInput('use-author-email') === 'true';
         const logFormat = useAuthorEmail ? '%ae' : '%an';
+        if (!branches || branches.length < 2) {
+            throw new Error('Please specify at least 2 branches');
+        }
         const originBranch = github.context.ref.split('/')[2];
         for (const branch of branches) {
             if (branch === originBranch) {
